@@ -1,0 +1,179 @@
+
+<nav class="navbar navbar-dark bg-dark d-flex">
+  <a class="navbar-brand p-2" href="https://developer.marvel.com/">
+    <img src="assets/Marvel-Comics-Logo.svg.png" width="130" height="50" alt="">
+  </a>
+  <form class="form-inline " [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()">
+    <input class="form-control  ml-auto p-2 " type="search" placeholder="Search" aria-label="Search" formControlName ="searchValue" >
+
+  </form>
+</nav>
+
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-lg-9">
+      <div class="d-flex justify-content-between">
+      <img src="assets/characters.png" width="30" height="30" alt="">
+      <h2 class="p-2">Marvel Characters</h2>
+      
+      <div class="dropdown">
+        <button class="btn btn-outline-danger dropdown-toggle p-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+          Order by 
+        </button>
+        <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton" >
+    
+          <a class="dropdown-item" value ="name" (click)="getSelectedValue('name')" >name ↓</a>
+          <a class="dropdown-item" value ="-name" (click)="getSelectedValue('-name')">name ↑</a>
+          <a class="dropdown-item" value ="modified" (click)="getSelectedValue('modified')">modified ↓</a>
+          <a class="dropdown-item" value ="-modified" (click)="getSelectedValue('-modified')">-modified ↑</a>
+    
+        </div>
+      </div>
+      </div>
+          <div *ngIf="characters">
+            
+            <ul class="character-container">
+              <li *ngFor="let character of characters| paginate: {itemsPerPage: pageSize,currentPage: currentPage,totalItems:totalCharacters }">
+                <div class="col-md-6">
+                  <div class="card " style="width: 18rem;">
+                    <img style="width: 120px;"class="card-img-top rounded-circle "[src]="character.thumbnail.path + '.' + character.thumbnail.extension" alt="{{ character.name }}" />
+                    <div class="card-body">
+                  
+                        <h3>{{ character.name }}</h3>
+                        <p> 
+                          <ng-container *ngIf="character.description; else defaultDescription">
+                            {{ character.description }}
+                          </ng-container>
+                          <ng-template #defaultDescription>
+                            This character does not have a description available
+                          </ng-template>
+                        </p>
+                        <button class="btn btn-danger" style="margin: 5px;" (click)="viewCharacterDetail(character.id)">View Details</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" (click)="viewCharacterMovies(character.id)">Series</button>
+                        <h4>Related Comics</h4>
+                        <ng-container *ngIf="character.comics.items.length > 0">
+                          <div class="row">
+                            <div class="col-md-6" *ngFor="let comics of character.comics.items.slice(0, 2)">
+                              <a style="color: black;" data-toggle="modal" data-target="#comicModal" href="javascript:void(0);" (click)="openComicModal(comics)">{{ comics.name }}</a>
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col-md-6" *ngFor="let comics of character.comics.items.slice(2, 4)">
+                              <a style="color: black;" data-toggle="modal" data-target="#comicModal" href="javascript:void(0);" (click)="openComicModal(comics)">{{ comics.name }}</a>
+                            </div>
+                          </div>
+                        </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <pagination-controls  (pageChange)="onPageChange($event)" ></pagination-controls>
+        </div>
+
+        <div class="modal fade" id="comicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{comicActive.title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div *ngIf="characters">
+                  <div class="row">
+                    <div class="col-md-6">
+                    <img  style="height: 200px;width: 200px;" [src]="this.comicActive.comicthumbnail + '.' + this.comicActive.comicextension" alt="Comic Thumbnail">
+                    </div>
+                    <div class="col-md-6">
+                    <p>{{comicActive.description}}</p>
+                  </div>
+                  </div>
+                </div>
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" style="color: red;background-color: #dbdada !important;font-weight: bold;" class="btn btn-light btn-lg" data-dismiss="modal" (click)="sendComic()">Add to favorites</button>
+                <button type="button"  style="color: red;background-color: #e7e7e7 !important;font-weight: bold;"class="btn btn-light btn-lg">Buy For $3.99</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role = "document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>Related Series</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item" *ngFor="let serie of series; let i = index" [class.active]="i === 0">
+                      <img style ="height: 500px; width: 500px;"[src]="serie.thumbnail.path + '.' + serie.thumbnail.extension"  class="d-block w-100" >
+                      <div class="carousel-caption d-none d-md-block" style="background-color: black">
+                      <h4>{{serie.title}}</h4>
+                      <h5>Description</h5>
+                      <p>{{serie.description}}</p>
+                      <a [attr.href]="serie.urls[0].url" target="_blank">
+                        <button type="button" class="btn btn-danger" >More about</button>
+                      </a>
+                      </div>
+                      
+
+                      
+                    </div>
+                  </div>
+                </div>
+                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+                
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+    <div class="col-lg-3" style="background-color: rgb(219, 219, 219);">
+      <div style="display:flex">
+        <img src="assets/favourites.png" width="30" height="30" alt="">
+        <h3>My Favourites</h3>
+      </div>
+      <ul>
+        <li *ngFor="let comic of comicList; let i = index" class="comic-item">
+          <i class="fa fa-trash" (click)="removeComic(i)"></i>
+          <img style="height: 200px; width: 150px;" [src]="comic.comicthumbnail + '.' + comic.comicextension" alt="Comic Thumbnail">
+          <p>{{ comic.title }}</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

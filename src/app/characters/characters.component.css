@@ -1,0 +1,32 @@
+.paragraph-container {
+    max-width: 100px; /* Adjust the maximum width as needed */
+    margin: 0 auto; /* Center the container horizontally (optional) */
+  }
+
+  .character-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px; 
+  }
+
+  .navbar-default .navbar-nav>.open>a.dropdown-toggle{
+    background-color: #f4511e !important;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+
+  .comic-item {
+    position: relative;
+    display: inline-block; /* Ensures the li elements stack horizontally */
+  }
+  
+  .fa-trash {
+    position: absolute;
+    top: -10px; /* Adjust this value to your preferred position from the top */
+    left: 120px; /* Adjust this value to your preferred position from the left */
+    font-size: 20px; /* Adjust the font size as needed */
+    color: black; /* Adjust the color as needed */
+    cursor: pointer; /* Add a pointer cursor to indicate it's clickable */
+  }

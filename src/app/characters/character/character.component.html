@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12" style="background-color: rgb(48, 48, 48);">
+      <h1 style="color: white;">{{ character.name }}</h1>
+    </div>
+  </div>
+  <div class="row align-items-center" style="background-color: white;">
+    <div class="col">
+      <div style=" padding: 10px; text-align: center;">
+        <img  class ="rounded "style="height: 500px; width: 500px;" [src]="character.thumbnail.path + '.' + character.thumbnail.extension" alt="{{ character.name }}" />
+      </div>
+    </div>
+    <div class="col">
+      
+        <h3 style="color: black;">Description</h3>
+        <p style="color: black;">{{ character.description }}</p>
+        <h3 style="color: black;">Date Modified</h3>
+        <p style="color: black;">{{ character.modified }}</p>
+        <button class="btn btn-danger" (click)="goBack()">Go Back</button>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
